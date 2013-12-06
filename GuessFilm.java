@@ -6,14 +6,21 @@
  *
  */
 public class GuessFilm {
-
-	private final int TRAINING_MODE = 0;
-	private final int GUESS_MODE = 1;
-	private final int APPEND_NEW_QUESTIONS = 2;
-	private final int APPEND_NEW_FILMS = 3;
+	public enum Mode {
+		TRAINING_MODE, GUESS_MODE, APPEND_NEW_QUESTIONS, APPEND_NEW_FILMS;
+	};
+	public enum ClassifierType {
+		NAIVE_BAYES; 
+		// TODO: add classifier
+	};
+	public enum AnswerOnQuestion {
+		YES, NO, DO_NOT_KNOW;
+	};
+	
 	
 	private Films films = new Films();
 	private Questions questions = new Questions();
+	private User user = new User();
 	
 	/**
 	 * Program start here
@@ -24,53 +31,84 @@ public class GuessFilm {
 		/*
 		 *  Choose mode
 		 */
-		if (guessFilm.modeSelection() == TRAINING_MODE) {
+		if (guessFilm.modeSelection() == Mode.TRAINING_MODE) {
 			guessFilm.train();
-		} else if (guessFilm.modeSelection() == GUESS_MODE) {
+		} else if (guessFilm.modeSelection() == Mode.GUESS_MODE) {
 			guessFilm.guess();
-		} else if (guessFilm.modeSelection() == APPEND_NEW_QUESTIONS){
+		} else if (guessFilm.modeSelection() == Mode.APPEND_NEW_QUESTIONS){
 			questions.appendNewQuestions();
-		} else if (guessFilm.modeSelection() == APPEND_NEW_FILMS) {
+		} else if (guessFilm.modeSelection() == Mode.APPEND_NEW_FILMS) {
 			films.appendNewFilms();
 		}
 	}
 
-	private void guess() {
-		/*
-		 * TODO main mode:
-		 * Choose classifier
-		 * Load model (if exists)
-		 * While user doesn't stop program and there are questions
-		 *** Choose new question
-		 *** Ask question
-		 *** Get instance (answer to question)
-		 *** Give instance to classifier
-		 *** Display answer
-		 * If user give right answer(film),
-		 *** save instances and right answer into database and train
-		 */
+	private void guess() {		
 		
+		/*
+		 * Choose classifier 
+		 */
+		ClassifierType classifierType = ClassifierType.NAIVE_BAYES;
+		
+		/*
+		 * Set classifier and load model
+		 */
+		Learning classifier = new Learning();
+		classifier.setClassifier(classifierType);
+		classifier.loadModel();
+		
+		/*
+		 * While there is question and user does't stop program - ask question
+		 */
+		while (questions.existsQuestion() && !user.StopProgram()) {
+			/*
+			 * Ask question
+			 */
+			Question currentQuestion = new Question();
+			currentQuestion = questions.getNextQuestion();
+			user.printQuestion(currentQuestion);
+			
+			/*
+			 * Answer question
+			 */
+			AnswerOnQuestion answerOnQuestion = user.getAnswerOnQuestion();
+			classifier.addFeature(currentQuestion, answerOnQuestion);
+			
+			/*
+			 * Classification
+			 */
+			Film currentFilm = new Film();
+			currentFilm = classifier.classify();
+			
+			/*
+			 * Show the result
+			 */
+			user.printFilm(currentFilm);
+		}
+		
+		/*
+		 * If user says right answer, train classifier
+		 */
+		if (user.giveTrueAnswer()) {
+			Film trueFilm = new Film();
+			trueFilm = user.trueFilm();
+			classifier.addAnswer(trueFilm);
+			classifier.train();
+			classifier.saveModel();
+		}
 	}
 
 	private void train() {
 		/*
 		 * TODO train mode:
-		 * Get instances and answers from user
-		 * Choose classifier
-		 * Give instances and answers to classifier
-		 * Save instances and answers into database
-		 * Save model
 		 */
-		
 	}
 	
 	/**
 	 * 
 	 * @return Program mode
 	 */
-	private int modeSelection() {
-		// TODO Get mode from User
-		return 0;
+	private Mode modeSelection() {
+		return user.getMode();
 	}
 
 }

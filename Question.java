@@ -8,8 +8,15 @@ public class Question {
 
 	private int id;
 	private String name;
+	private boolean used;
+	
+	public Question() {
+		id = -1;
+		used = false;
+	}
 
 	public Question(int idQuestion) {
+		used = false;
 		id = idQuestion;
 		
 		DataBase dataBase = new DataBase();
@@ -56,6 +63,13 @@ public class Question {
 	 */
 	public void appendNewQuestion(int idQuestion) {
 		// TODO append new question into database
+	}
+	
+	/**
+	 *  
+	 */
+	public boolean isUsed() {
+		return used;
 	}
 
 }

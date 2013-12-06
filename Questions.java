@@ -8,11 +8,13 @@ import java.util.HashMap;
  */
 public class Questions {
 	private int amountQuestions;
+	private int amountAskedQuestions;
 	private Map<Integer, Question> listQuestions = new HashMap<Integer, Question>();
 
 	public Questions() {
 		initializeListQuestions();
 		amountQuestions = listQuestions.size();
+		amountAskedQuestions = 0;
 	}
 	
 	/**
@@ -44,6 +46,30 @@ public class Questions {
 	 */
 	public void appendNewQuestions() {
 		// TODO append new Questions in database (call Question.appendNewQuestion)
+	}
+
+	/**
+	 * @return true, if there is a question, which haven't been asked yet.    
+	 * false, otherwise
+	 */
+	public boolean existsQuestion() {
+		if (amountQuestions > amountAskedQuestions) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 
+	 * next question
+	 */
+	public Question getNextQuestion() {
+		Question curQuestion = new Question();
+		
+		// TODO realize algorithm
+		
+		amountAskedQuestions++;
+		return curQuestion;
 	}
 
 }

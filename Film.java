@@ -17,6 +17,10 @@ public class Film {
 		name = dataBase.selectFilmName(id);
 	}
 	
+	public Film() {
+	
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -53,11 +57,11 @@ public class Film {
 	}
 	
 	/**
-	 * Append new Film into database
+	 * Add new Film into database
 	 * @param idFilm
 	 */
 	public void appendNewFilm(int idFilm) {
-		// TODO append new film in database
+		// TODO add new film in database
 	}
 
 }
