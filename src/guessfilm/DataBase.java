@@ -1,4 +1,4 @@
-package guessfilm;
+package guessFilm;
 
 /**
  * 
@@ -34,3 +34,4 @@ public class DataBase {
 	}
 
 }
+

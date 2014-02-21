@@ -1,19 +1,26 @@
-package guessfilm.model;
+package guessFilm.model;
 
-import java.util.Map;
-import java.util.HashMap;
-
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 /**
  * 
  * Store data about questions
  * 
  */
-// XXX Why not to use just List<Film>? It would be more efficient in terms of
-// both memory and cpu.
+
 public class Questions {
 	private int amountQuestions;
 	private int amountAskedQuestions;
-	private Map<Integer, Question> listQuestions = new HashMap<Integer, Question>();
+	private ArrayList<Question> listQuestions;
 
 	public Questions() {
 		initializeListQuestions();
@@ -25,8 +32,24 @@ public class Questions {
 	 * Initialize list of questions (listQuestions). Select data from database
 	 */
 	private void initializeListQuestions() {
-		// TODO Select all pairs <id, Question> from database and save in
-		// listQuestions
+		listQuestions = new ArrayList<Question>();
+		int index = 1;
+		
+		try {
+			InputStream inputStream = new FileInputStream(new File("questions.txt"));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			try {
+				String line = reader.readLine();
+				while (line != null) {
+					listQuestions.add(new Question(index++, line));
+					line = reader.readLine();
+				}
+			} finally {
+				reader.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -49,13 +72,47 @@ public class Questions {
 	/**
 	 * Append new questions in database
 	 */
-	public void appendNewQuestions() {
-		// TODO append new Questions in database (call
-		// Question.appendNewQuestion)
+	public void appendNewQuestions() {		
+		int index = amountQuestions + 1;
+		
+		// read from file
+		try {
+			InputStream inputStream = new FileInputStream(new File("newQuestions.txt"));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			try {
+				String line = reader.readLine();
+				while (line != null) {
+					listQuestions.add(new Question(index++, line));
+					amountQuestions++;
+					line = reader.readLine();
+				}
+			} finally {
+				reader.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// save new information in file
+		try {
+			OutputStream outputStream = new FileOutputStream(new File("questions.txt"));
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+			try {
+				for (int i = 0; i < amountQuestions; i++) {
+					writer.write(listQuestions.get(i).getQuestionName());
+					writer.newLine();
+				}
+			} finally {
+				writer.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**
-	 * @return true, if there is a question, which haven't been asked yet.
+	 * @return true, if there is a question, which hasn't been asked yet.
 	 *         false, otherwise
 	 */
 	public boolean existsQuestion() {
@@ -66,15 +123,15 @@ public class Questions {
 	}
 
 	/**
-	 * 
 	 * next question
 	 */
 	public Question getNextQuestion() {
-		Question curQuestion = new Question();
+		Question curQuestion = listQuestions.get(amountAskedQuestions);
 
 		// TODO realize algorithm
 
 		amountAskedQuestions++;
+		curQuestion.setUsed();
 		return curQuestion;
 	}
 

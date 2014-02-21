@@ -1,6 +1,6 @@
-package guessfilm.model;
+package guessFilm.model;
 
-import guessfilm.DataBase;
+import guessFilm.DataBase;
 
 /**
  * 
@@ -26,38 +26,15 @@ public class Question {
 		name = dataBase.selectQuestionName(id);
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
+	public Question(int id, String name) {
+		this.id = id;
+		this.name = name;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Question other = (Question) obj;
-		if (id != other.id)
-			return false;
-		return true;
-	}
-	
 	/**
 	 * @return String representation of question
 	 */
-	public String getQestionName() {
+	public String getQuestionName() {
 		return name;
 	}
 	/**
@@ -68,11 +45,16 @@ public class Question {
 		// TODO append new question into database
 	}
 	
-	/**
-	 *  
-	 */
 	public boolean isUsed() {
 		return used;
+	}
+
+	public int getIndex() {
+		return id;
+	}
+	
+	public void setUsed() {
+		used = true;
 	}
 
 }
